@@ -1,4 +1,4 @@
-package com.example.mapsapi
+package com.example.AndroMoto
 
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult

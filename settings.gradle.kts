@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MapsAPI"
+rootProject.name = "AndroMoto"
 include(":app")

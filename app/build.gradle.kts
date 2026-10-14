@@ -9,13 +9,13 @@ configurations.configureEach {
 }
 
 android {
-    namespace = "com.example.mapsapi"
+    namespace = "com.example.AndroMoto"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.mapsapi"
+        applicationId = "com.example.andromoto"
         minSdk = 24
         targetSdk = 37
         versionCode = 1

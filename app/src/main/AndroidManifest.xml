@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.mapsapi"
+    package="com.example.AndroMoto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -11,15 +11,15 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/AndroMoto"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MapsAPI">
+        android:theme="@style/Theme.AndroMoto">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.AndroMoto.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MapsAPI"
+            android:label="@string/AndroMoto"
+            android:theme="@style/Theme.AndroMoto"
             android:windowSoftInputMode="adjustResize"
 
             android:showWhenLocked="true"
@@ -36,7 +36,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="mapsapi"
+                    android:scheme="andromoto"
                     android:host="callback" />
             </intent-filter>
         </activity>
