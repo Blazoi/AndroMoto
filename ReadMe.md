@@ -54,7 +54,7 @@ Before launching navigation, the app requires permission for **precise location 
 For the navigation I used the **Google Navigation SDK** which gets you real-time turn by turn navigation. Essentially giving me a mini google maps running inside of my app.
 
 <div align="center">
-  <img src="app/src/img/p1_maps_v1.png" alt="Maps View" width="650" style="border-radius: 8px;"/>
+  <img src="app/src/img/activeTrip.png" alt="Maps View" width="650" style="border-radius: 8px;"/>
 </div>
 
 <br/>
