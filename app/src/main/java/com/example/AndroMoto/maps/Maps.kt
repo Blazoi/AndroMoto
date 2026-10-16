@@ -60,7 +60,6 @@ fun NavMap(
     navigator: Navigator?,
     setNavigator: (Navigator) -> Unit,
     destination: LatLng?,
-    onArrived: () -> Unit
 ) {
     val context = LocalContext.current
     val activity = context as Activity
@@ -112,7 +111,6 @@ fun NavMap(
             lifecycleOwner.lifecycle.removeObserver(observer)
             navigator?.stopGuidance()
             navigator?.clearDestinations()
-            onArrived()
         }
     }
 
