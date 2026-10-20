@@ -8,7 +8,7 @@ import kotlin.time.Instant
 
 @Database(
     entities = [WayPoint::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 

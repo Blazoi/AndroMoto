@@ -18,7 +18,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 
 @Composable
-fun LaunchGate(content: @Composable () -> Unit) {
+fun LaunchGate(
+    accessGranted: @Composable () -> Unit,
+    accessDenied: @Composable () -> Unit
+) {
     val context = LocalContext.current
 
     var granted by remember {
@@ -41,13 +44,8 @@ fun LaunchGate(content: @Composable () -> Unit) {
     }
 
     if (granted) {
-        content()
+        accessGranted()
     } else {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("Flop")
-        }
+        accessDenied()
     }
 }

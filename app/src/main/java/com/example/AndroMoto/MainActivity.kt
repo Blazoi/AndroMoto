@@ -33,17 +33,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.android.volley.BuildConfig
 import com.example.AndroMoto.data.WayPoint
 import com.example.AndroMoto.data.WayPointViewModel
 import com.example.AndroMoto.ui.theme.AndroMotoTheme
 import com.example.AndroMoto.quickaccess.QuickAccess
-import com.example.AndroMoto.quickaccess.search.AddPopUp
-import com.example.AndroMoto.quickaccess.search.PopupBox
-import com.example.AndroMoto.quickaccess.search.SearchPopUp
+import com.example.AndroMoto.quickaccess.popups.AddPopUP
+import com.example.AndroMoto.quickaccess.popups.SearchPopUP
+//import com.example.AndroMoto.quickaccess.search.AddPopUp
+//import com.example.AndroMoto.quickaccess.search.PopupBox
+//import com.example.AndroMoto.quickaccess.search.SearchPopUp
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.navigation.Navigator
+import com.google.android.libraries.places.api.Places
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
 import kotlin.getValue
@@ -57,15 +61,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // makes app accessible when closed
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
         }
+
+        Places.initializeWithNewPlacesApiEnabled(this, "AIzaSyAjJHzWJE8b4AUQWVROz-ucd2vDDDGyMhg")
+
         setContent {
             AndroMotoTheme {
-                LaunchGate {
-                    MainUI(wayPointViewModel)
-                }
+                MainUI(wayPointViewModel)
             }
         }
     }
@@ -75,7 +82,7 @@ class MainActivity : ComponentActivity() {
 fun MainUI(wayPointViewModel: WayPointViewModel) {
 
     Scaffold { innerPadding ->
-        var isAddingVisible by remember { mutableStateOf(true) }
+        var isAddingVisible by remember { mutableStateOf(false) }
         var isSearchingVisible by remember { mutableStateOf(false) }
 
         var navigator by remember { mutableStateOf<Navigator?>(null) }
@@ -86,10 +93,20 @@ fun MainUI(wayPointViewModel: WayPointViewModel) {
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(targetPosition, 10f)
         }
+
         LaunchedEffect(targetPosition) {
             cameraPositionState.animate(
                 CameraUpdateFactory.newLatLngZoom(targetPosition, 13f)
             )
+        }
+
+        if (isAddingVisible) {
+            AddPopUP(wayPointViewModel) { isAddingVisible = false }
+        }
+        if (isSearchingVisible) {
+            SearchPopUP(
+                { isSearchingVisible = false },
+                { destination = it })
         }
 
         Box(
@@ -99,32 +116,30 @@ fun MainUI(wayPointViewModel: WayPointViewModel) {
             contentAlignment = Alignment.Center
         ) {
 
-            PopupBox(
-                isAddingVisible,
-                { isAddingVisible = false },
-                { AddPopUp() }
-            )
-            PopupBox(
-                isSearchingVisible,
-                { isSearchingVisible = false },
-                { SearchPopUp() }
-            )
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(25.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                if (false) {
-                    DisplayMap(targetPosition, cameraPositionState, markerState)
-                } else {
-                    NavMap(
-                        navigator,
-                        { navigator = it },
-                        destination
-                    )
-                }
+                LaunchGate(
+                    {
+                        NavMap(
+                            navigator,
+                            { navigator = it },
+                            destination
+                        )
+                    },
+                    {
+                        DisplayMap(
+                            targetPosition,
+                            cameraPositionState,
+                            markerState
+                        )
+                    }
+
+                )
+
                 Music()
                 QuickAccess(
                     wayPointViewModel,
@@ -136,10 +151,8 @@ fun MainUI(wayPointViewModel: WayPointViewModel) {
                     {
                         if (it == "add") {
                             isAddingVisible = !isAddingVisible
-                            isSearchingVisible = false
                         } else {
                             isSearchingVisible = !isSearchingVisible
-                            isAddingVisible = false
                         }
                     }
                 )
