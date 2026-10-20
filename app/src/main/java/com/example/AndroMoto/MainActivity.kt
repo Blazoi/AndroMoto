@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
             setTurnScreenOn(true)
         }
 
-        Places.initializeWithNewPlacesApiEnabled(this, "AIzaSyAjJHzWJE8b4AUQWVROz-ucd2vDDDGyMhg")
+        Places.initializeWithNewPlacesApiEnabled(this, MAPS_API_KEY)
 
         setContent {
             AndroMotoTheme {
