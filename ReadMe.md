@@ -19,7 +19,7 @@ I wanted to be able to easily control music and navigation **Apple CarPlay/Andro
 
 <div align="center">
   <h3>Current App State</h3>
-  <img src="app/src/img/p1_v1.png" alt="Full Page Dashboard" width="700" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
+  <img src="app/src/img/loc_perm_denied_2.jpg" alt="Full Page Dashboard" width="700" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>
 </div>
 
 <br/>
@@ -34,16 +34,16 @@ Before launching navigation, the app requires permission for **precise location 
   <tr>
     <td width="50%" align="center" valign="top">
       <h4>1. Request Permission</h4>
-      <img src="app/src/img/loc_perm_request.jpg" alt="Permission Request" width="100%"/>
+      <img src="app/src/img/loc_perm_request_2.jpg" alt="Permission Request" width="100%"/>
     </td>
     <td width="50%" align="center" valign="top">
       <h4>2. Location Access Denied</h4>
-      <img src="app/src/img/loc_perm_denied.jpg" alt="Permission Denied" width="100%"/>
+      <img src="app/src/img/loc_perm_denied_2.jpg" alt="Permission Denied" width="100%"/>
     </td>
   </tr>
 </table>
 
-> **Planned Update:** *Adjust permission handling so non-location features are available even if location access is denied.*
+> **Update:** The app stays usable even without location permissions.<br/> Instead of navigation, you get a simple map
 
 <br/>
 
@@ -60,12 +60,13 @@ For the navigation I used the **Google Navigation SDK** which gets you real-time
 <br/>
 
 ### Quick Access Bottom Bar
-A dedicated control bar designed for fast, gloved touch interactions on the go:
+Control bar for easy interctions, even when gloved :<br/>
+> (Swipe right, left to switch between the two)
 
 <table width="100%">
   <tr>
     <td width="50%" align="center" valign="top">
-      <img src="app/src/img/p1_qa_v1.jpg" alt="Waypoints Quick Access" width="100%"/>
+      <img src="app/src/img/add_search.jpg" alt="Waypoints Quick Access" width="100%"/>
       <br/><sub><b>Waypoints & Addresses</b></sub>
     </td>
     <td width="50%" align="center" valign="top">
@@ -75,11 +76,30 @@ A dedicated control bar designed for fast, gloved touch interactions on the go:
   </tr>
 </table>
 
-* **Start Navigation:** Quick route to pre-saved favorite locations.
-* **Save Addresses:** Add new destinations directly to your quick-start grid.
+* **Start Navigation:** Quick route to favorite locations.
+* **Save Addresses:** Add new destinations to your favorites.
 * **One-Time Search:** Search and navigate without saving to your grid.
-* **Playlist Switcher:** Audio control on the move.
+* **Playlist Switcher:** Easy peasy Audio control.
 * **Map Controls:** Easily toggling maps settings
+
+#### **Address Search**
+Addresses Behaviour:<br/>
+* If adding, pressing on an address will add it to favorites<br/>
+* If searching, pressing on an address will navigate to said destination<br/>
+
+<table width="100%">
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <img src="app/src/img/add_add.jpg" alt="Waypoints Quick Access" width="100%"/>
+      <br/><sub><b>Waypoints & Addresses</b></sub>
+    </td>
+    <td width="50%" align="center" valign="top">
+      <img src="app/src/img/after_added.jpg" alt="Maps Actions Quick Access" width="100%"/>
+      <br/><sub><b>Maps Quick Actions</b></sub>
+    </td>
+  </tr>
+</table>
+
 
 <br/>
 
