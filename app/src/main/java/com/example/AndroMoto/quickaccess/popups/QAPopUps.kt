@@ -5,7 +5,9 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,12 +15,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -55,29 +60,16 @@ fun AddPopUP(
     wayPointViewModel: WayPointViewModel,
     onDismiss: () -> Unit,
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {},
-        modifier = Modifier
-            .height(400.dp),
-        shape = RoundedCornerShape(28.dp),
-
-        title = {
-            Text(
-                text = "Add to quick access",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold
-            )
-        },
-
-        text = {
-            FindAddress(
-                onDismiss
-            ) { wayPoint, latLong ->
-                wayPointViewModel.add( wayPoint )
-            }
+    QuickAccessDialog(
+        title = "Add to quick access",
+        onDismiss = onDismiss
+    ) {
+        FindAddress(
+            onDismiss
+        ) { wayPoint, latLong ->
+            wayPointViewModel.add(wayPoint)
         }
-    )
+    }
 }
 
 @Composable
@@ -85,27 +77,38 @@ fun SearchPopUP(
     onDismiss: () -> Unit,
     navigateTo: (LatLng) -> Unit
 ) {
+    QuickAccessDialog(
+        title = "Search",
+        onDismiss = onDismiss
+    ) {
+        FindAddress(
+            onDismiss
+        ) { wayPoint, latLong ->
+            navigateTo(latLong ?: LatLng(0.0, 0.0))
+        }
+    }
+}
+
+@Composable
+private fun QuickAccessDialog(
+    title: String,
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit,
+) {
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {},
         modifier = Modifier.height(400.dp),
         shape = RoundedCornerShape(28.dp),
-
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         title = {
             Text(
-                text = "Search",
-                style = MaterialTheme.typography.titleLarge,
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.SemiBold
             )
         },
-
-        text = {
-            FindAddress(
-                onDismiss
-            ) { wayPoint, latLong ->
-                navigateTo( latLong ?: LatLng(0.0, 0.0) )
-            }
-        }
+        text = content
     )
 }
 
@@ -173,13 +176,25 @@ fun FindAddress(
                     contentDescription = null
                 )
             },
+            trailingIcon = {
+                if (query.isNotEmpty()) {
+                    IconButton(onClick = { query = "" }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Clear"
+                        )
+                    }
+                }
+            },
             singleLine = true,
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(18.dp)
         )
 
         LazyColumn(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 12.dp),
+            contentPadding = PaddingValues(bottom = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             userScrollEnabled = true
         ) {
@@ -191,68 +206,90 @@ fun FindAddress(
                 var longitude = ""
 
                 item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                            .clickable {
-                                kbController?.hide()
-                                closePopUp()
+                    PredictionRow(
+                        primary = address,
+                        secondary = secondary,
+                        onClick = {
+                            kbController?.hide()
+                            closePopUp()
 
-                                try {
-                                    val output = geocoder.getFromLocationName(address, 1)
-                                    if (!output.isNullOrEmpty()) {
-                                        latitude = output[0].latitude.toString().take(8)
-                                        longitude = output[0].longitude.toString().take(8)
-                                    }
-                                } catch (e: Exception) {
-                                    Log.d(TAG, e.toString())
+                            try {
+                                val output = geocoder.getFromLocationName(address, 1)
+                                if (!output.isNullOrEmpty()) {
+                                    latitude = output[0].latitude.toString().take(8)
+                                    longitude = output[0].longitude.toString().take(8)
                                 }
-
-                                action(
-                                    WayPoint(
-                                        prediction.getPrimaryText(null).toString(),
-                                        "$latitude,$longitude",
-                                        address
-                                    ),
-                                    LatLng(latitude.toDouble(), longitude.toDouble()),
-                                )
+                            } catch (e: Exception) {
+                                Log.d(TAG, e.toString())
                             }
-                            .padding(horizontal = 14.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
-                        )
 
-                        Column(
-                            modifier = Modifier
-                                .padding(start = 12.dp)
-                                .weight(1f)
-                        ) {
-                            Text(
-                                text = address,
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Medium,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                            action(
+                                WayPoint(
+                                    prediction.getPrimaryText(null).toString(),
+                                    "$latitude,$longitude",
+                                    address
+                                ),
+                                LatLng(latitude.toDouble(), longitude.toDouble()),
                             )
-                            if (secondary.isNotEmpty()) {
-                                Text(
-                                    text = secondary,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
                         }
-                    }
+                    )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PredictionRow(
+    primary: String,
+    secondary: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(18.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Icon in a soft circular badge
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.LocationOn,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .padding(start = 12.dp)
+                .weight(1f)
+        ) {
+            Text(
+                text = primary,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            if (secondary.isNotEmpty()) {
+                Text(
+                    text = secondary,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

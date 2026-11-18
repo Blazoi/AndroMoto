@@ -32,10 +32,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-import com.android.volley.BuildConfig
 import com.example.AndroMoto.data.WayPoint
 import com.example.AndroMoto.data.WayPointViewModel
+import com.example.AndroMoto.music.SpotifyManager
 import com.example.AndroMoto.ui.theme.AndroMotoTheme
 import com.example.AndroMoto.quickaccess.QuickAccess
 import com.example.AndroMoto.quickaccess.popups.AddPopUP
@@ -50,6 +49,10 @@ import com.google.android.libraries.navigation.Navigator
 import com.google.android.libraries.places.api.Places
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
+import androidx.activity.result.contract.ActivityResultContracts
+import com.spotify.sdk.android.auth.AuthorizationClient
+import com.spotify.sdk.android.auth.AuthorizationRequest
+import com.spotify.sdk.android.auth.AuthorizationResponse
 import kotlin.getValue
 
 public val TAG = "DEBUGGING"
@@ -57,6 +60,7 @@ public val TAG = "DEBUGGING"
 class MainActivity : ComponentActivity() {
 
     val wayPointViewModel: WayPointViewModel by viewModels()
+    private val spotify = SpotifyManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,18 +72,57 @@ class MainActivity : ComponentActivity() {
             setTurnScreenOn(true)
         }
 
-        Places.initializeWithNewPlacesApiEnabled(this, MAPS_API_KEY)
+        Places.initializeWithNewPlacesApiEnabled(this, BuildConfig.MAPS_API_KEY)
 
         setContent {
             AndroMotoTheme {
-                MainUI(wayPointViewModel)
+                MainUI(wayPointViewModel, spotify)
             }
         }
     }
+
+    private var auth = false
+
+    override fun onStart() {
+        super.onStart()
+        if (!auth) {
+            auth = true
+            authorizeSpotify()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        spotify.disconnect()
+    }
+
+    private val authLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val response = AuthorizationClient.getResponse(result.resultCode, result.data)
+        if (response.type == AuthorizationResponse.Type.TOKEN) {
+            spotify.connect(this)
+        } else {
+            Log.e("SPOTIFY", "Auth result: ${response.type} ${response.error}")
+        }
+    }
+
+    private fun authorizeSpotify() {
+        val request = AuthorizationRequest.Builder(
+            BuildConfig.SPOTIFY_CLIENT_ID,
+            AuthorizationResponse.Type.TOKEN,
+            "andromoto://callback"
+        )
+            .setScopes(arrayOf("app-remote-control"))
+            .build()
+        authLauncher.launch(AuthorizationClient.createLoginActivityIntent(this, request))
+    }
 }
 
+
+
 @Composable
-fun MainUI(wayPointViewModel: WayPointViewModel) {
+fun MainUI(wayPointViewModel: WayPointViewModel, spotify: SpotifyManager) {
 
     Scaffold { innerPadding ->
         var isAddingVisible by remember { mutableStateOf(false) }
@@ -140,7 +183,7 @@ fun MainUI(wayPointViewModel: WayPointViewModel) {
 
                 )
 
-                Music()
+                Music(spotify)
                 QuickAccess(
                     wayPointViewModel,
                     navigator,

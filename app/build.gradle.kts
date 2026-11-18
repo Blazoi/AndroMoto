@@ -1,3 +1,6 @@
+import java.util.Properties
+import kotlin.apply
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -9,11 +12,10 @@ configurations.configureEach {
     exclude(group = "com.google.android.gms", module = "play-services-maps")
 }
 
+
 android {
     namespace = "com.example.AndroMoto"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.andromoto"
@@ -21,6 +23,9 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
+
+        manifestPlaceholders["redirectSchemeName"] = "andromoto"
+        manifestPlaceholders["redirectHostName"] = "callback"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,6 +45,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -54,6 +60,11 @@ dependencies {
     implementation("com.google.android.libraries.places:places:3.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.5")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
+    implementation("io.coil-kt.coil3:coil-compose:3.6.3")
+    //Spotify
+    implementation(files("libs/spotify-app-remote-release-0.8.0.aar"))
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.spotify.android:auth:2.1.0")
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
