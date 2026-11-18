@@ -50,6 +50,7 @@ import com.google.android.libraries.places.api.Places
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.MaterialTheme
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
@@ -124,7 +125,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainUI(wayPointViewModel: WayPointViewModel, spotify: SpotifyManager) {
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background
+    ) { innerPadding ->
         var isAddingVisible by remember { mutableStateOf(false) }
         var isSearchingVisible by remember { mutableStateOf(false) }
 

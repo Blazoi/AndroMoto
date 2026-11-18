@@ -62,6 +62,7 @@ fun Music(
     val track = spotify.playerState?.track
     val cover = spotify.albumArt
     var isPlaying = spotify.playerState?.isPaused == false
+    val progressIndicator = (spotify.playerState?.playbackPosition?.toFloat() ?: 0f) / (track?.duration?.toFloat() ?: 1f)
 
     Card(
         modifier = modifier
@@ -137,7 +138,7 @@ fun Music(
 
                 // Progress bar
                 LinearProgressIndicator(
-                    progress = { (spotify.playerState?.playbackPosition?.toFloat() ?: 0f) / (track?.duration?.toFloat() ?: 1f) },
+                    progress = { progressIndicator },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(6.dp)

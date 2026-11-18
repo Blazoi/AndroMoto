@@ -54,6 +54,7 @@ dependencies {
     implementation("com.google.maps.android:maps-compose:8.4.0")
     implementation("androidx.compose.material:material-icons-extended:1.7.5")
     implementation("com.google.android.libraries.navigation:navigation:8.0.0")
+    implementation(libs.androidx.compose.ui.text.google.fonts)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.1.5")
     implementation("androidx.room:room-ktx:2.8.5")
     ksp("androidx.room:room-compiler:2.8.5")
@@ -61,6 +62,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.5")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
     implementation("io.coil-kt.coil3:coil-compose:3.6.3")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.12.1")
     //Spotify
     implementation(files("libs/spotify-app-remote-release-0.8.0.aar"))
     implementation("com.google.code.gson:gson:2.10.1")

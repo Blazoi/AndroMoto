@@ -54,6 +54,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
+import androidx.compose.ui.platform.LocalLocale
 
 @Composable
 fun AddPopUP(
@@ -129,7 +130,7 @@ fun FindAddress(
     var predictions by remember { mutableStateOf<List<AutocompletePrediction>>(emptyList()) }
     var skipNextSearch by remember { mutableStateOf(false) }
 
-    val geocoder = Geocoder(context, Locale.getDefault())
+    val geocoder = Geocoder(context, LocalLocale.current.platformLocale)
     val kbController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(query) {
@@ -254,7 +255,6 @@ private fun PredictionRow(
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Icon in a soft circular badge
         Box(
             modifier = Modifier
                 .size(40.dp)
